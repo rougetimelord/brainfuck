@@ -5,8 +5,22 @@ import sys
 JMP_TABLE = {}
 def setup():
     """Sanitize code"""
-    code = list(re.sub(r'[^<>+-.,\[\]]', '', sys.argv[1] if len(sys.argv) > 1
-                       else input("Code:\n")))
+    txt = sys.argv[1] if len(sys.argv) > 1 else input("Code:\n")
+    if re.search(r'.bf|.txt', txt):
+        try:
+            with open(txt, 'r') as f:
+                txt = f.read()
+        except IOError as err:
+            print(err)
+            setup()
+    code = list(re.sub(r'[^<>+-.,\[\]]', '', txt))
+    main(code)
+
+code_ptr = 0
+data_ptr = 0
+tape = {}
+def main(code):
+    """Run code"""
     op = []
     for i, c in enumerate(code):
         if c == '[':
@@ -19,15 +33,10 @@ def setup():
             except IndexError:
                 op.append(i)
     if op:
+        print('Unbalanced loops')
         exit()
-    main(code)
 
-code_ptr = 0
-data_ptr = 0
-def main(code):
-    """Run code"""
     global code_ptr
-    tape = {}
     def ptr_i():
         """Tape head++"""
         global data_ptr
@@ -86,9 +95,7 @@ def main(code):
     while code_ptr < len(code):
         inst_tbl[code[code_ptr]]()
         code_ptr += 1
-    input("Done, hit enter to exit")
+    input("\nDone, hit enter to exit")
 
 if __name__ == '__main__':
     setup()
-else:
-    main(list(sys.argv[1]))
