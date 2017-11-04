@@ -2,7 +2,6 @@
 import re
 import sys
 
-JMP_TABLE = {}
 def setup():
     """Sanitize code"""
     txt = sys.argv[1] if len(sys.argv) > 1 else input("Code:\n")
@@ -16,11 +15,12 @@ def setup():
     code = list(re.sub(r'[^<>+-.,\[\]]', '', txt))
     main(code)
 
-code_ptr = 0
-data_ptr = 0
-tape = {}
+CODE_PTR = 0
+DATA_PTR = 0
 def main(code):
     """Run code"""
+    tape = {}
+    jmp_tbl = {}
     op = []
     for i, c in enumerate(code):
         if c == '[':
@@ -28,43 +28,43 @@ def main(code):
         if c == ']':
             try:
                 out = op.pop()
-                JMP_TABLE[i] = out
-                JMP_TABLE[out] = i
+                jmp_tbl[i] = out
+                jmp_tbl[out] = i
             except IndexError:
                 op.append(i)
     if op:
         print('Unbalanced loops')
         exit()
 
-    global code_ptr
+    global CODE_PTR
     def ptr_i():
         """Tape head++"""
-        global data_ptr
-        data_ptr += 1
+        global DATA_PTR
+        DATA_PTR += 1
         return
     def ptr_d():
         """Tape head--"""
-        global data_ptr
-        data_ptr -= 1
+        global DATA_PTR
+        DATA_PTR -= 1
         return
     def add():
         """Cell++"""
-        if data_ptr in tape:
-            tape[data_ptr] += 1
+        if DATA_PTR in tape:
+            tape[DATA_PTR] += 1
         else:
-            tape[data_ptr] = 1
+            tape[DATA_PTR] = 1
         return
     def sub():
         """Cell--"""
-        if data_ptr in tape:
-            tape[data_ptr] -= 1
+        if DATA_PTR in tape:
+            tape[DATA_PTR] -= 1
         else:
-            tape[data_ptr] = 0
+            tape[DATA_PTR] = 0
         return
     def outp():
         """Output"""
         try:
-            print(chr(tape[data_ptr]), end='', flush=True)
+            print(chr(tape[DATA_PTR]), end='', flush=True)
         except OSError as e:
             print("OS Exception %s" % e)
         return
@@ -75,26 +75,27 @@ def main(code):
             x = int(x)
         except ValueError:
             x = ord(x)
-        tape[data_ptr] = x
+        tape[DATA_PTR] = x
         return
     def jmp_i():
         """Jump if 0"""
-        global code_ptr
-        code_ptr = ((JMP_TABLE[code_ptr] - 1) if data_ptr not in tape or not tape[data_ptr]
-                    else code_ptr)
+        global CODE_PTR
+        CODE_PTR = ((jmp_tbl[CODE_PTR] - 1) if DATA_PTR not in tape or not tape[DATA_PTR]
+                    else CODE_PTR)
         return
     def jmp_o():
         """Jump if 1"""
-        global code_ptr
-        code_ptr = (JMP_TABLE[code_ptr] - 1) if data_ptr in tape and tape[data_ptr] else code_ptr
+        global CODE_PTR
+        CODE_PTR = (jmp_tbl[CODE_PTR] - 1) if DATA_PTR in tape and tape[DATA_PTR] else CODE_PTR
         return
     inst_tbl = {'>': ptr_i,
                 '<': ptr_d, '+': add, '-': sub,
                 '.': outp, ',': inp, '[': jmp_i,
                 ']': jmp_o}
-    while code_ptr < len(code):
-        inst_tbl[code[code_ptr]]()
-        code_ptr += 1
+    while CODE_PTR < len(code):
+        inst_tbl[code[CODE_PTR]]()
+        CODE_PTR += 1
+
     input("\nDone, hit enter to exit")
 
 if __name__ == '__main__':
