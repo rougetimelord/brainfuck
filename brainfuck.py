@@ -2,6 +2,7 @@
 import re
 import sys
 
+JMP_TBL = {}
 def setup():
     """Sanitize code"""
     txt = sys.argv[1] if len(sys.argv) > 1 else input("Code:\n")
@@ -13,14 +14,7 @@ def setup():
             print(err)
             setup()
     code = list(re.sub(r'[^<>+-.,\[\]]', '', txt))
-    main(code)
-
-CODE_PTR = 0
-DATA_PTR = 0
-def main(code):
-    """Run code"""
-    tape = {}
-    jmp_tbl = {}
+    global JMP_TBL
     op = []
     for i, c in enumerate(code):
         if c == '[':
@@ -28,14 +22,20 @@ def main(code):
         if c == ']':
             try:
                 out = op.pop()
-                jmp_tbl[i] = out
-                jmp_tbl[out] = i
+                JMP_TBL[i] = out
+                JMP_TBL[out] = i
             except IndexError:
                 op.append(i)
     if op:
         print('Unbalanced loops')
         exit()
+    interpreter(code)
 
+CODE_PTR = 0
+DATA_PTR = 0
+def interpreter(code):
+    """Run code"""
+    tape = {}
     global CODE_PTR
     def ptr_i():
         """Tape head++"""
@@ -80,13 +80,13 @@ def main(code):
     def jmp_i():
         """Jump if 0"""
         global CODE_PTR
-        CODE_PTR = ((jmp_tbl[CODE_PTR] - 1) if DATA_PTR not in tape or not tape[DATA_PTR]
+        CODE_PTR = ((JMP_TBL[CODE_PTR] - 1) if DATA_PTR not in tape or not tape[DATA_PTR]
                     else CODE_PTR)
         return
     def jmp_o():
         """Jump if 1"""
         global CODE_PTR
-        CODE_PTR = (jmp_tbl[CODE_PTR] - 1) if DATA_PTR in tape and tape[DATA_PTR] else CODE_PTR
+        CODE_PTR = (JMP_TBL[CODE_PTR] - 1) if DATA_PTR in tape and tape[DATA_PTR] else CODE_PTR
         return
     inst_tbl = {'>': ptr_i,
                 '<': ptr_d, '+': add, '-': sub,
