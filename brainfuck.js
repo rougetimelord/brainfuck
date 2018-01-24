@@ -10,6 +10,6 @@ var setup=function(text){
     code=text.split('').map(s=>s.trim()).filter(s=>/[<>+-.,\[\]]/.test(s));
     a=[];r=/\[/g;while((m=r.exec(text))!=null){a.push(m.index)};
     b=[];r=/\]/g;while((m=r.exec(text))!=null){b.push(m.index)};
-    jmpr=(a,b)=>{((a&&b&&a.length!=b.length)?!1:(r={},a.foreach((e,index)=>{r.e=b[index];r.b[index]=e}),r))};jmp_tbl=jmpr(a,b);
+    jmp_tbl={};(a&&b&&a.length===b.length)?(a.forEach((v,i)=>{jmp_tbl[v]=b[i];jmp_tbl[b[i]]=v})):!1;
     interpretter(code,jmp_tbl);
 }
