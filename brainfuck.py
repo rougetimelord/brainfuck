@@ -6,14 +6,14 @@ JMP_TBL = {}
 def setup():
     """Sanitize code"""
     txt = sys.argv[1] if len(sys.argv) > 1 else input("Code:\n")
-    if re.search(r'.bf|.txt', txt):
+    if re.search(r'\.(bf|b|txt)$', txt):
         try:
             with open(txt, 'r') as f:
                 txt = f.read()
         except IOError as err:
             print(err)
             setup()
-    code = list(re.sub(r'[^<>+-.,\[\]]', '', txt))
+    code = list(re.sub(r'[^\<\>\-+.,\[\]]', '', txt))
     global JMP_TBL
     op = []
     for i, c in enumerate(code):
