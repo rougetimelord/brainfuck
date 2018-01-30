@@ -95,7 +95,6 @@ def interpreter(code):
     while CODE_PTR < len(code):
         inst_tbl[code[CODE_PTR]]()
         CODE_PTR += 1
-
     input("\nDone, hit enter to exit")
 
 if __name__ == '__main__':
