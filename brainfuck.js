@@ -6,10 +6,10 @@ var interpretter=(c,j)=>{
 }
 /*Split string and filter everything that isn't BF out
 Then setup a jump table and start interpretting*/
-var setup=(text)=>{
-    c=text.split('').map(s=>s.trim()).filter(s=>/[<>+-.,\[\]]/.test(s));
-    a=[];r=/\[/g;while((m=r.exec(text))!=null)a.push(m.index);
-    b=[];r=/\]/g;while((m=r.exec(text))!=null)b.push(m.index);
+var setup=(t)=>{
+    c=t.split('').map(s=>s.trim()).filter(s=>/[<>+-.,\[\]]/.test(s));
+    a=[];r=/\[/g;while((m=r.exec(t))!=null)a.push(m.index);
+    b=[];r=/\]/g;while((m=r.exec(t))!=null)b.push(m.index);
     jt={};if(a&&b&&a.length===b.length){(a.forEach((v,i)=>{jt[v]=b[i];jt[b[i]]=v}))};
     interpretter(c,jt);
 }
