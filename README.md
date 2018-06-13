@@ -6,6 +6,7 @@ Brainfuck.py:
    
 Brainfuck.js:
 * Exposes setup(String code) which creates a token list and a jump table, and interpreter(Array code, Object jumptable) which interprets brainfuck code
+* The io object includes two functions, io.o for output and io.i for input. The object can be overwritten as needed so you can use any i/o methods you want.
 
 ### TODO
 * Add code head display
