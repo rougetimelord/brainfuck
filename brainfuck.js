@@ -1,4 +1,4 @@
-//What's less readable brainfuck or this interpretter?
+//What's less readable brainfuck or this interpreter?
 var brainfuck = class {
     /*Split string and filter everything that isn't BF out
     Then setup a jump table and I/O*/
