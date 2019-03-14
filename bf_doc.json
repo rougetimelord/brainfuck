@@ -1,0 +1,30 @@
+{
+    "base": {
+        "regex": "<>+-.,\\[\\]",
+        "<": "Decrements pointer horizontally",
+        ">": "Increments pointer horizontally",
+        "+": "Increments cell",
+        "-": "Decrements cell",
+        ".": "Outputs cell",
+        ",": "Inputs to cell",
+        "[": "Jump past the matching bracket if cell == 0",
+        "]": "Jump to matching bracket if cell != 0"
+    },
+    "ext_+3": {
+        "regex": "^vx",
+        "^": "Increment pointer vertically",
+        "v": "Decrement pointer vertically",
+        "x": "End program"
+    },
+    "ext_pbrain": {
+        "regex": ":()",
+        ":": "Call the procedure identified by current cell",
+        "(": "Create procedure with the identifier of current cell",
+        ")": "Close procedure",
+        "ext_tbrain": {
+            "regex": ";\\",
+            ";": "Call procedure on new thread (each thread has it's own pointer",
+            "\\": "Join threads of a function"
+        }
+    }
+}
